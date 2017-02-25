@@ -1,0 +1,26 @@
+{
+  "name": "zsc-supporter-new-layout",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/saw303/zsc-supporter-preview.git"
+  },
+  "author": "Silvio Wangler",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/saw303/zsc-supporter-preview#readme",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "browser-sync": "^2.14.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-imagemin": "^3.0.3",
+    "gulp-uglify": "^2.0.0",
+    "gulp-useref": "^3.1.0"
+  }
+}
