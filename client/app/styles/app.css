@@ -1,9 +1,19 @@
-.timerApp {
-    padding-top: 230px;
+
+body {
+    /*background-image: url('/images/zeit-einteilen.jpg');
+    background-repeat: no-repeat;*/
+    background-color: darkgray;
 }
 
-.timerContent {
-    max-width: 900px;
-    margin-left: 200px;
-    margin-right: 200px;
+main {
+    /*Footer immer ganz unter platzieren*/
+    flex: 1 0 auto;
+
+    padding-top: 5%;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.app-overview-card {
+   /* width: 50%;*/
 }
