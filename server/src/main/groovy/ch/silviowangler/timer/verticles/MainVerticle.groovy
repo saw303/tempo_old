@@ -11,6 +11,9 @@ class MainVerticle extends AbstractVerticle {
     @Override
     void start(Future<Void> startFuture) throws Exception {
 
+        vertx.deployVerticle(new ObserverVerticle())
+        vertx.deployVerticle(FileRepoVerticle.canonicalName, [worker: true])
+
         vertx.deployVerticle(new HttpServerVerticle(), { res ->
 
             if (res.succeeded()) {
@@ -20,7 +23,5 @@ class MainVerticle extends AbstractVerticle {
             }
         })
 
-        vertx.deployVerticle(new ObserverVerticle())
-        vertx.deployVerticle(FileRepoVerticle.canonicalName, [worker: true])
     }
 }
