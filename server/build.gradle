@@ -16,6 +16,7 @@ mainClassName = 'io.vertx.core.Launcher'
 dependencies {
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
+    compile "io.vertx:vertx-auth-jwt:${vertxVersion}"
     compile "io.vertx:vertx-lang-groovy:${vertxVersion}"
 }
 
