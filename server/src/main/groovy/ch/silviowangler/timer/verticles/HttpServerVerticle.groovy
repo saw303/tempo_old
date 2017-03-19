@@ -5,6 +5,7 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CookieHandler
+import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.SessionHandler
 import io.vertx.ext.web.sstore.LocalSessionStore
 /**
@@ -32,7 +33,7 @@ class HttpServerVerticle extends AbstractVerticle {
         ]
 
         def server = vertx.createHttpServer(options)
-        def provider = JWTAuth.create(vertx, config)
+        def jwt = JWTAuth.create(vertx, config)
 
         def router = Router.router(vertx)
 
@@ -43,7 +44,7 @@ class HttpServerVerticle extends AbstractVerticle {
                         .setCookieSecureFlag(true)
         )
 
-        //router.route().path('/api/*').handler(BasicAuthHandler.create(provider))
+        router.route().path('/api/*').handler(JWTAuthHandler.create(jwt, '/api/newToken'))
 
         def apiRoute = router.route().path('/*')
 
@@ -64,6 +65,16 @@ class HttpServerVerticle extends AbstractVerticle {
                     .putHeader("X-FRAME-OPTIONS", "DENY")
 
             context.next()
+        })
+
+        router.route().path('/api/newToken').handler({ context ->
+            context.response().putHeader("Content-Type", "text/plain")
+            def token = jwt.generateToken([
+                    sub: "paulo"
+            ], [:])
+
+            logger.info("JWT Token is '${token}'")
+            context.response().end(token)
         })
 
         def routeRecords = router.route().path('/api/user/records')
