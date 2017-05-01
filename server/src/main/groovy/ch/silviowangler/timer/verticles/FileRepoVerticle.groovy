@@ -27,10 +27,14 @@ class FileRepoVerticle extends AbstractVerticle {
             String userId = message.headers().get('userId')
             File userFile = new File(this.source, "${userId}.json")
 
-            logger.info("About to read from user file {}", userFile.name)
+            if (userFile.exists()) {
+                logger.info("About to read from user file {}", userFile.name)
 
-            message.reply(new JsonObject(userFile.text).toString())
-
+                message.reply(new JsonObject(userFile.text).toString())
+            } else {
+                logger.warn("User file {} does not exist", userFile.absolutePath)
+                message.fail(404, "user ${userId} does not exist")
+            }
         })
     }
 }

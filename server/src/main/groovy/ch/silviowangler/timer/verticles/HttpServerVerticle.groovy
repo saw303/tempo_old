@@ -80,24 +80,32 @@ class HttpServerVerticle extends AbstractVerticle {
             context.response().end(token)
         })
 
-        def routeRecords = router.route().path('/api/user/records')
+        def routeRecords = router.route().path('/api/user/:userid/records')
 
         routeRecords.handler({ routingContext ->
             def request = routingContext.request()
 
             request.bodyHandler({ b ->
-                println "REQUEST: ${b.toString()}"
-                vertx.eventBus().send(EventAdresses.GET_TIME_ENTRIES.name(), "read time records", [headers: [userId: 'foo']], { reply ->
+
+                def userid = request.getParam('userid')
+
+                logger.info "Reading record for user {}", userid
+                vertx.eventBus().send(EventAdresses.GET_TIME_ENTRIES.name(), "read time records", [headers: [userId: userid]], { reply ->
 
                     // This handler will be called for every request
                     def response = routingContext.response()
-                    response.putHeader("content-type", "text/json")
 
                     if (reply.succeeded()) {
+                        response.putHeader("content-type", "text/json")
                         // Write to the response and end it
                         response.end(reply.result().body())
                     } else {
-                        response.end("Shit that did not work out!")
+
+                        logger.warn("Reply failed {}", reply.failed())
+                        response.statusCode = 500
+                        response.putHeader("content-type", "text/plain")
+
+                        response.end('That did not work out well')
                     }
                 })
             })
