@@ -5,5 +5,5 @@ package ch.silviowangler.timer.verticles;
  */
 public enum EventAdresses {
 
-  GET_C_TIME_ENTIRIES
+  GET_TIME_ENTRIES
 }

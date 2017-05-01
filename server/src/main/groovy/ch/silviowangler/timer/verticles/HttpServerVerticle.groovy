@@ -87,7 +87,7 @@ class HttpServerVerticle extends AbstractVerticle {
 
             request.bodyHandler({ b ->
                 println "REQUEST: ${b.toString()}"
-                vertx.eventBus().send(EventAdresses.GET_C_TIME_ENTIRIES.name(), "read time records", [headers: [userId: '12']], { reply ->
+                vertx.eventBus().send(EventAdresses.GET_TIME_ENTRIES.name(), "read time records", [headers: [userId: 'foo']], { reply ->
 
                     // This handler will be called for every request
                     def response = routingContext.response()

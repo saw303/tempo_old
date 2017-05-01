@@ -2,32 +2,34 @@ package ch.silviowangler.timer.verticles
 
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.json.JsonObject
-
+import io.vertx.core.logging.Logger
+import io.vertx.core.logging.LoggerFactory
 /**
  * @author Silvio Wangler
  */
 class FileRepoVerticle extends AbstractVerticle {
 
+    private File source
+    private static final Logger logger = LoggerFactory.getLogger(FileRepoVerticle)
+
+    FileRepoVerticle() {
+        this.source = new File(System.getProperty('tempo.source'))
+
+        assert this.source.exists()
+        assert this.source.isDirectory()
+        assert this.source.canWrite()
+    }
+
     @Override
     void start() throws Exception {
-        vertx.eventBus().consumer(EventAdresses.GET_C_TIME_ENTIRIES.name(), { message ->
+        vertx.eventBus().consumer(EventAdresses.GET_TIME_ENTRIES.name(), { message ->
 
-            println "FILE ${message.body()} -- ${message.headers()}"
+            String userId = message.headers().get('userId')
+            File userFile = new File(this.source, "${userId}.json")
 
-            message.reply(new JsonObject('''
-            {
-                "records": [
-                    {
-                        "from": "2017-03-13T08:00Z",
-                        "to": "2017-03-13T12:15Z"
-                    },
-                    {
-                        "from": "2017-03-13T20:00Z",
-                        "to": "2017-03-13T21:00Z"
-                    }
-                ]
-            }
-''').toString())
+            logger.info("About to read from user file {}", userFile.name)
+
+            message.reply(new JsonObject(userFile.text).toString())
 
         })
     }
