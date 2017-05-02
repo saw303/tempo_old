@@ -1,5 +1,5 @@
 sudo: false
 language: java
-script: ./server/gradlew clean build
+script: cd server && ./gradlew clean build && cd ..
 jdk:
   - oraclejdk8
