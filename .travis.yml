@@ -1,0 +1,5 @@
+sudo: false
+language: java
+script: ./server/gradlew clean build
+jdk:
+  - oraclejdk8
