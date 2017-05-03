@@ -4,11 +4,15 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.handler.CookieHandler
 import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.SessionHandler
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.ext.web.sstore.LocalSessionStore
+
+import static ch.silviowangler.timer.verticles.EventAdresses.GET_TIME_ENTRIES
+
 /**
  * @author Silvio Wangler
  */
@@ -80,37 +84,37 @@ class HttpServerVerticle extends AbstractVerticle {
             context.response().end(token)
         })
 
-        def routeRecords = router.route().path('/api/user/:userid/records')
-
-        routeRecords.handler({ routingContext ->
-            def request = routingContext.request()
-
-            request.bodyHandler({ b ->
-
-                def userid = request.getParam('userid')
-
-                logger.info "Reading record for user {}", userid
-                vertx.eventBus().send(EventAdresses.GET_TIME_ENTRIES.name(), "read time records", [headers: [userId: userid]], { reply ->
-
-                    // This handler will be called for every request
-                    def response = routingContext.response()
-
-                    if (reply.succeeded()) {
-                        response.putHeader("content-type", "text/json")
-                        // Write to the response and end it
-                        response.end(reply.result().body())
-                    } else {
-
-                        logger.warn("Reply failed {}", reply.failed())
-                        response.statusCode = 500
-                        response.putHeader("content-type", "text/plain")
-
-                        response.end('That did not work out well')
-                    }
-                })
-            })
-        })
+        router.get('/api/user/:userid/records').handler(this.&handleGetRecords)
 
         server.requestHandler(router.&accept).listen()
+    }
+
+    private void handleGetRecords (RoutingContext routingContext) {
+        def request = routingContext.request()
+
+        request.bodyHandler({ b ->
+
+            def userid = request.getParam('userid')
+
+            logger.info "Reading record for user {}", userid
+            vertx.eventBus().send(GET_TIME_ENTRIES.name(), "read time records", [headers: [userId: userid]], { reply ->
+
+                // This handler will be called for every request
+                def response = routingContext.response()
+
+                if (reply.succeeded()) {
+                    response.putHeader("content-type", "text/json")
+                    // Write to the response and end it
+                    response.end(reply.result().body())
+                } else {
+
+                    logger.warn("Reply failed {}", reply.failed())
+                    response.statusCode = 500
+                    response.putHeader("content-type", "text/plain")
+
+                    response.end('That did not work out well')
+                }
+            })
+        })
     }
 }

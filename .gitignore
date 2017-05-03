@@ -1,0 +1,12 @@
+.gradle
+server/build/
+!server/gradle/wrapper/gradle-wrapper.jar
+
+### IntelliJ IDEA ###
+server/.idea
+server/*.iws
+server/*.iml
+server/*.ipr
+
+### vertx
+server/.vertx
