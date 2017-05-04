@@ -1,5 +1,6 @@
 package ch.silviowangler.timer.verticles
 
+import ch.silviowangler.timer.TempoProperties
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.auth.jwt.JWTAuth
@@ -24,8 +25,10 @@ class HttpServerVerticle extends AbstractVerticle {
     @Override
     void start() throws Exception {
 
+        def httpPort = vertx.getOrCreateContext().config()[TempoProperties.HTTP_PORT] as Integer
+
         def options = [
-                port       : 8300,
+                port       : httpPort,
                 logActivity: true
         ]
 
@@ -85,11 +88,17 @@ class HttpServerVerticle extends AbstractVerticle {
         })
 
         router.get('/api/user/:userid/records').handler(this.&handleGetRecords)
+        router.post('/api/user/:userid/records').handler(this.&handleNewRecord)
 
         server.requestHandler(router.&accept).listen()
     }
 
-    private void handleGetRecords (RoutingContext routingContext) {
+    private void handleNewRecord(RoutingContext routingContext) {
+        routingContext.response().statusCode = 201
+        routingContext.response().end('ok')
+    }
+
+    private void handleGetRecords(RoutingContext routingContext) {
         def request = routingContext.request()
 
         request.bodyHandler({ b ->

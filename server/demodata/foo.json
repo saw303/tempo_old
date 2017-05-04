@@ -1,4 +1,8 @@
 {
+  "userDetails": {
+    "name": "Bar",
+    "firstname": "Foo"
+  },
   "records": [
     {
       "id": "1",

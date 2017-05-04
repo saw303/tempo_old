@@ -10,3 +10,4 @@ server/*.ipr
 
 ### vertx
 server/.vertx
+server/out
